@@ -50,7 +50,7 @@ template<typename T> void SparseMatrix<T>::construct(int rows, int columns)
 
 	this->vals = NULL;
 	this->cols = NULL;
-	this->rows = new vector<int>(rows + 1, 1);
+	this->rows = new vector<int>(rows + 1, 0);
 }
 
 
@@ -60,7 +60,7 @@ template<typename T> T SparseMatrix<T>::get(int row, int col) const
 
 	int actual;
 
-	for (int i = this->rows->at(row - 1) - 1; i < this->rows->at(row) - 1; i++) {
+	for (int i = this->rows->at(row); i < this->rows->at(row + 1); i++) {
 		actual = this->cols->at(i);
 
 		if (actual == col) {
@@ -79,10 +79,10 @@ template<typename T> SparseMatrix<T> & SparseMatrix<T>::set(T val, int row, int 
 {
 	this->validateCoordinations(row, col);
 
-	int pos = this->rows->at(row - 1) - 1;
-	int actual = -1;
+	int pos = this->rows->at(row);
+	int actual = -2;
 
-	for (; pos < this->rows->at(row) - 1; pos++) {
+	for (; pos < this->rows->at(row + 1); pos++) {
 		actual = this->cols->at(pos);
 
 		if (actual == col) {
@@ -173,7 +173,7 @@ template<typename T> SparseMatrix<T> SparseMatrix<T>::add(const SparseMatrix<T> 
 
 template<typename T> void SparseMatrix<T>::validateCoordinations(int row, int col) const
 {
-	if (row < 1 || col < 1 || row > this->m || col > this->n) {
+	if (row < 0 || col < 0 || row >= this->m || col >= this->n) {
 		throw "Coordinations out of range.";
 	}
 }
@@ -190,7 +190,7 @@ template<typename T> void SparseMatrix<T>::insert(int index, int row, int col, T
 		this->cols->insert(this->cols->begin() + index, col);
 	}
 
-	for (int i = row; i <= this->m; i++) {
+	for (int i = row + 1; i <= this->m; i++) {
 		this->rows->at(i) = this->rows->at(i) + 1;
 	}
 }
@@ -213,8 +213,8 @@ template<typename T> void SparseMatrix<T>::print()
 	NumberFormatInfo^ nfi = MyCI->NumberFormat;
 	nfi->NumberDecimalDigits = 4;
 
-	for (int i = 1; i <= this-> m; i++){
-		for (int j = 1; j <= this->n; j++){
+	for (int i = 0; i < this-> m; i++){
+		for (int j = 0; j < this->n; j++){
 			Console::Write(L"{0,8}", (this -> get(i,j)).ToString(L"F", nfi));
 		}
 		Console::WriteLine();
