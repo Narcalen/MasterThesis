@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MasterThesis", "MasterThesis\MasterThesis.vcxproj", "{45449966-27DA-443F-8B24-9E8E786BB313}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sparse-Matrix", "Sparse-Matrix\Sparse-Matrix.vcxproj", "{032C40F1-9E7D-4EB1-B3BE-9E1548662245}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{45449966-27DA-443F-8B24-9E8E786BB313}.Debug|Win32.Build.0 = Debug|Win32
 		{45449966-27DA-443F-8B24-9E8E786BB313}.Release|Win32.ActiveCfg = Release|Win32
 		{45449966-27DA-443F-8B24-9E8E786BB313}.Release|Win32.Build.0 = Release|Win32
+		{032C40F1-9E7D-4EB1-B3BE-9E1548662245}.Debug|Win32.ActiveCfg = Debug|Win32
+		{032C40F1-9E7D-4EB1-B3BE-9E1548662245}.Debug|Win32.Build.0 = Debug|Win32
+		{032C40F1-9E7D-4EB1-B3BE-9E1548662245}.Release|Win32.ActiveCfg = Release|Win32
+		{032C40F1-9E7D-4EB1-B3BE-9E1548662245}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
