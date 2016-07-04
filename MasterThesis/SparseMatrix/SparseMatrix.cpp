@@ -12,8 +12,6 @@
 #include "SparseMatrix.h"
 
 using namespace std;
-using namespace System;
-using namespace System::Globalization;
 
 
 template<typename T> SparseMatrix<T>::SparseMatrix(int n)
@@ -31,11 +29,14 @@ template<typename T> SparseMatrix<T>::SparseMatrix(int rows, int columns)
 template<typename T> SparseMatrix<T>::~SparseMatrix(void)
 {
 	if (this->vals != NULL) {
-		delete this->vals;
-		delete this->cols;
+		//delete this->vals;
+		//delete this->cols;
+		this -> vals -> clear();
+		this -> cols -> clear();
 	}
 
-	delete this->rows;
+	//delete this->rows;
+	this -> rows -> clear();
 }
 
 
@@ -206,25 +207,28 @@ template<typename T> void SparseMatrix<T>::remove(int index, int row)
 	}
 }
 
-template<typename T> void SparseMatrix<T>::print()
-{
-	// Gets a NumberFormatInfo associated with the en-US culture.
-	CultureInfo^ MyCI = gcnew CultureInfo( "en-US",false );
-	NumberFormatInfo^ nfi = MyCI->NumberFormat;
-	nfi->NumberDecimalDigits = 4;
-
-	for (int i = 0; i < this-> m; i++){
-		for (int j = 0; j < this->n; j++){
-			Console::Write(L"{0,8}", (this -> get(i,j)).ToString(L"F", nfi));
-		}
-		Console::WriteLine();
-	}
-	Console::WriteLine();
-}
-
 template<typename T> T SparseMatrix<T>::operator () (int row, int col) const
 {
 	return this->get(row,col);
+}
+
+template<typename T> ostream & operator << (ostream & os, const SparseMatrix<T> & matrix)
+{
+	for (int i = 0; i < matrix.m; i++) {
+		for (int j = 0; j < matrix.n; j++) {
+			if (j != 0) {
+				os << "\t";
+			}
+
+			os << matrix.get(i, j);
+		}
+
+		if (i < matrix.m) {
+			os << endl;
+		}
+	}
+
+	return os;
 }
 
 
@@ -243,29 +247,18 @@ template<typename T> bool operator != (const SparseMatrix<T> & a, const SparseMa
 	return !(a == b);
 }
 
-
-template<typename T> ostream & operator << (ostream & os, const SparseMatrix<T> & matrix)
-{
-	for (int i = 1; i <= matrix.m; i++) {
-		for (int j = 1; j <= matrix.n; j++) {
-			if (j != 1) {
-				os << " ";
-			}
-
-			os << matrix.get(i, j);
-		}
-
-		if (i < matrix.m) {
-			os << endl;
-		}
-	}
-
-	return os;
-}
-
 template class SparseMatrix<int>;
 template class SparseMatrix<float>;
 template class SparseMatrix<double>;
 
 template bool operator == (const SparseMatrix<int> & a, const SparseMatrix<int> & b);
+template bool operator == (const SparseMatrix<float> & a, const SparseMatrix<float> & b);
+template bool operator == (const SparseMatrix<double> & a, const SparseMatrix<double> & b);
+
 template bool operator != (const SparseMatrix<int> & a, const SparseMatrix<int> & b);
+template bool operator != (const SparseMatrix<float> & a, const SparseMatrix<float> & b);
+template bool operator != (const SparseMatrix<double> & a, const SparseMatrix<double> & b);
+
+template ostream & operator << (ostream & os, const SparseMatrix<int> & matrix);
+template ostream & operator << (ostream & os, const SparseMatrix<float> & matrix);
+template ostream & operator << (ostream & os, const SparseMatrix<double> & matrix);
