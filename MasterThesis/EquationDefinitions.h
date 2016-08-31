@@ -1,0 +1,23 @@
+#pragma once
+
+const int COORD_LOWER_BOUND_X = 0;
+const int COORD_UPPER_BOUND_X = 4;
+const int COORD_LOWER_BOUND_Y = 0;
+const int COORD_UPPER_BOUND_Y = 4;
+
+const double delta_x = 1;
+const double delta_y = 0.5;
+
+const double EPSILON = 0.0001;
+
+namespace def{
+	template <typename T> 
+	T sigma (T x, T y){
+		return (T) 0;
+	}
+
+	template <typename T>
+	double boundaryValue (T x, T y){
+		return (double) 1;
+	}
+}

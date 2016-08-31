@@ -54,6 +54,9 @@ template<typename T> void SparseMatrix<T>::construct(int rows, int columns)
 	this->rows = new vector<int>(rows + 1, 0);
 }
 
+template<typename T> int SparseMatrix<T>::size() const{
+	return m;
+}
 
 template<typename T> T SparseMatrix<T>::get(int row, int col) const
 {

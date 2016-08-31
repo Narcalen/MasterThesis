@@ -2,37 +2,91 @@
 #include "iomanip"
 #include "SparseMatrix\SparseMatrix.h"
 #include "SimpleIteration.h"
+#include "EquationDefinitions.h"
 #include "Util.h"
 
 using namespace std;
 
 void main(){
 
+	//output format
 	cout << fixed << showpoint;
-    cout << setprecision(4);
+	cout << setprecision(2);
 
-	cout << "Hello world" << endl;
-	SparseMatrix<double> m(3);
-	m.set(10,0,0).
-		set(1,0,1).
-		set(-1,0,2).
-		set(1,1,0).
-		set(10,1,1).
-		set(-1,1,2).
-		set(-1,2,0).
-		set(1,2,1).
-		set(10,2,2);
+	const int coord_x_steps = (COORD_UPPER_BOUND_X - COORD_LOWER_BOUND_X) / delta_x + 1;
+	const int coord_y_steps = (COORD_UPPER_BOUND_Y - COORD_LOWER_BOUND_Y) / delta_y + 1;
+	const int matr_size = (coord_x_steps - 2) * (coord_y_steps - 2);
 
-	vector<double>* freeElements = new vector<double>(3);
-	freeElements -> at(0) = 11;
-	freeElements -> at(1) = 10;
-	freeElements -> at(2) = 10;
+	//cout << "x steps: " << coord_x_steps << endl;
+	//cout << "y steps: " << coord_y_steps << endl;
 
-	//cout << m(1,0) << endl;
-	cout << m << endl;
+	//initialize u
+	vector<vector<double>> u;
+	u.resize(coord_x_steps, vector<double>(coord_y_steps, -1));
 
-	vector<double>* result = JacobiSolver(m, freeElements);
-	print(cout, result);
-	
+	//set boundary values:
+	for (int x = 0; x < coord_x_steps; x++){
+		u[x][0] = def::boundaryValue(x, 0);
+		u[x][coord_y_steps-1] = def::boundaryValue(x, coord_y_steps-1);
+	}
+	for (int y = 0; y < coord_y_steps; y++){
+		u[0][y] = def::boundaryValue(0, y);
+		u[coord_x_steps-1][y]	= def::boundaryValue(coord_x_steps-1, y);
+	}
+
+	//initialize matrix with the coefficients
+	SparseMatrix<double> coeff(matr_size);
+	for (int i = 0; i < matr_size; i++){
+		if (i >= coord_y_steps - 2){
+			coeff.set( 1/(delta_x*delta_x), i, i - (coord_y_steps - 2)); 
+		}
+		if (i >= 1 && i % (coord_y_steps -2) > 0){
+			coeff.set( 1/(delta_y*delta_y), i, i - 1); 
+		}
+		if (delta_x != delta_y){ //Temporary workaround as SparseMatrix class does not handle 0 insertion properly
+			coeff.set ((2/(delta_y*delta_y) - 2/(delta_x*delta_x)), i, i);
+		}
+		if (i < matr_size - 1 && (i+1) % (coord_y_steps -2) > 0){
+			coeff.set( 1/(delta_y*delta_y), i, i + 1); 
+		}
+		if (i < matr_size - (coord_y_steps - 2)){
+			coeff.set( 1/(delta_x*delta_x), i, i + (coord_y_steps - 2)); 
+		}
+
+	}
+	//cout << coeff << endl;
+
+	vector<double> freeElements(matr_size);
+	for (int i = 1; i < coord_x_steps - 1; i++){
+		for (int j = 1; j < coord_y_steps - 1; j++){
+			int coord = (i-1)*(coord_y_steps-2) + (j-1);
+			freeElements[coord] = -def::sigma(COORD_LOWER_BOUND_X + i * delta_x, COORD_LOWER_BOUND_Y + j * delta_y);
+			if (j == 1){
+				freeElements[coord] += -u[i][j-1] / (delta_y * delta_y);
+			}
+			else if (j == coord_y_steps - 2){
+				freeElements[coord] += -u[i][j+1] / (delta_y * delta_y);
+			}
+			if (i == 1){
+				freeElements[coord] += -u[i-1][j] / (delta_x * delta_x);
+			}
+			else if (i == coord_x_steps - 2){
+				freeElements[coord] += -u[i+1][j] / (delta_x * delta_x);
+			}
+		}
+	}
+	//util::print(freeElements);
+
+	vector<double> result = JacobiSolver(coeff, freeElements);
+	//util::print(result);
+
+	int j = 0;
+	for (int x = 1; x < coord_x_steps-1; x++){
+		for (int y = 1; y < coord_y_steps-1; y++){
+			u[x][y] = result[j++];
+		}
+	}
+
+	util::print_matrix(u);
 	getchar();
 }

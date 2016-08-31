@@ -40,6 +40,12 @@ public:
 	*/
 	SparseMatrix(int rows, int columns);
 
+	/**
+	* Matrix size getter
+	*
+	* @return square matrix size
+	*/
+	int size() const;
 
 	/**
 	* Element value getter

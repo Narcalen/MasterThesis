@@ -1,11 +1,39 @@
 #pragma once
 #include "SparseMatrix\SparseMatrix.h"
+#include "EquationDefinitions.h"
 #include <vector>
-#include <iostream>
+#include <assert.h>
+//#include <iostream>
+//#include <iomanip>
 
 using namespace std;
 
-const double EPSILON = 0.0001;
-
 template <typename T> 
-vector<T>* JacobiSolver(SparseMatrix<T> matrix, vector<T>* freeElements);
+vector<T> JacobiSolver(const SparseMatrix<T>& matrix, const vector<T>& freeElements){
+	assert(matrix.size() == freeElements.size());
+	int N = freeElements.size();
+	vector<T> result(N, 0.5);
+	vector<T> temp(N);
+	double norm;
+
+	int j = 0;
+	do {
+		for (int i = 0; i < N; i++){
+			temp[i] = freeElements[i];
+			for (int j = 0; j < N; j++){
+				if (i != j){
+					temp[i] -= matrix(i,j) * result[j];
+				}
+			}
+			temp[i] /= matrix(i,i);
+		}
+		norm = util::norm(result, temp);
+		result.assign(temp.begin(), temp.end());
+		//cout << "iteration " << j++ << endl;
+		//util::print(result);
+		//getchar();
+	}
+	while (norm > EPSILON);
+
+	return result;
+}

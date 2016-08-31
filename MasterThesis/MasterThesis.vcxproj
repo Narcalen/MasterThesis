@@ -71,11 +71,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SimpleIteration.cpp" />
     <ClCompile Include="SparseMatrix\SparseMatrix.cpp" />
-    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConjugateGradient.h" />
+    <ClInclude Include="EquationDefinitions.h" />
     <ClInclude Include="SimpleIteration.h" />
     <ClInclude Include="SparseMatrix\SparseMatrix.h" />
     <ClInclude Include="Util.h" />
