@@ -1,8 +1,9 @@
-#include "iostream"
-#include "iomanip"
+#include <iostream>
+#include <iomanip>
 #include "SparseMatrix\SparseMatrix.h"
 #include "SimpleIteration.h"
 #include "EquationDefinitions.h"
+#include "ConjugateGradient.h"
 #include "Util.h"
 
 using namespace std;
@@ -54,7 +55,8 @@ void main(){
 		}
 
 	}
-	//cout << coeff << endl;
+	cout << "Coefficients: " << endl;
+	cout << coeff << endl;
 
 	vector<double> freeElements(matr_size);
 	for (int i = 1; i < coord_x_steps - 1; i++){
@@ -75,9 +77,12 @@ void main(){
 			}
 		}
 	}
-	//util::print(freeElements);
+	cout << "Free elements: " << endl;
+	util::print(freeElements);
 
-	vector<double> result = JacobiSolver(coeff, freeElements);
+	//Jacobi solver does not work as the matrix is not diagonally dominant
+	//vector<double> result = JacobiSolver(coeff, freeElements);
+	vector<double> result = ConjugateGradientSolver(coeff, freeElements);
 	//util::print(result);
 
 	int j = 0;
