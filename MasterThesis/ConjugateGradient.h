@@ -5,23 +5,26 @@
 #include <vector>
 
 using namespace std;
+using namespace util;
 
 template <typename T> 
 vector<T> ConjugateGradientSolver(const SparseMatrix<T>& matrix, const vector<T>& freeElements){
 	assert(matrix.size() == freeElements.size());
 	int N = matrix.size();
-	vector<T> result(N,0), d(N,0), prevG(N,0), curG(N,0);
-	T s;
+	vector<T> result(N, 1), z(N), oldR(N), Az(N), r(N);
+	T alpha, beta;
 
-	prevG.assign(freeElements.begin(), freeElements.end());
-	prevG *= -1;
+	r = add(freeElements, multiply((T)-1, multiply(matrix, result)));
+	z.assign(r.begin(), r.end());
 
-	for (i = 1; i <=N; i++){
-		curG = matrix * result + (-1) * freeElements;
-		d *= (-1) * curG  + util::scalar(curG,curG)/util::scalar(prevG,prevG);
-		s = util::scalar(d, curG) / util::scalar(d, matrix * d);
-		result += s * d;
-		prevG.assign(curG.begin(), curG.end());
+	for (int i = 1; i <=N; i++){
+		Az = multiply(matrix, z);
+		alpha = scalar(r, r) / scalar(Az, z);
+		result = add(result, multiply(alpha, z));
+		oldR.assign(r.begin(), r.end());
+		r = add(r, multiply(-1 * alpha, Az));
+		beta = scalar(r, r) / scalar(oldR, oldR);
+		z = add(r, multiply(beta, z));
 	}
 
 	return result;

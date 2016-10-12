@@ -5,6 +5,9 @@
 #include <assert.h>
 #include <algorithm>
 #include <functional>
+#include <iterator>
+
+using namespace std;
 
 namespace util {
 
@@ -73,22 +76,22 @@ namespace util {
 		assert(vector1.size() == vector2.size());
 		T result = 0;
 		for (int i = 0; i < vector1.size(); i++) {
-			result += = vector1[i] + vector2[i];
+			result += vector1[i] * vector2[i];
 		}
 
 		return result;
 	}
 
 	template<typename T>
-	vector<T> multiplyVectors (const vector<vector<T>>& matrix, const vector<T>& vector) {
+	vector<T> multiply (const SparseMatrix<T>& matrix, const vector<T>& vector) {
 		int rows = matrix.size();
-		int cols = matrix[0].size();
+		int cols = matrix.size();
 		assert(vector.size() == cols);
-		vector<T> result(rows, 0);
+		std::vector<T> result(rows, 0);
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				result[i] += matrix[i][j] * vector[j];
+				result[i] += matrix.get(i,j) * vector[j];
 			}
 		}
 
@@ -99,7 +102,10 @@ namespace util {
 	template <typename T>
 	vector<T> multiply(const T number, const std::vector<T>& vector)
 	{
-		vector<T> result = transform(vector.begin(), vector.end(), vector.begin(), bind1st(multiplies<T>(), number));
+		std::vector<T> result;
+		result.reserve(vector.size());
+
+		std::transform(vector.begin(), vector.end(), std::back_inserter(result), bind1st(multiplies<T>(), number));
 		return result;
 	}
 

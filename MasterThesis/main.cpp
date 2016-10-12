@@ -92,6 +92,8 @@ void main(){
 		}
 	}
 
+	cout << "Result: " << endl;
 	util::print_matrix(u);
+	cout << "The end!" << endl;
 	getchar();
 }
