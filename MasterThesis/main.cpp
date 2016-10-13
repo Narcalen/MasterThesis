@@ -44,9 +44,9 @@ void main(){
 		if (i >= 1 && i % (coord_y_steps -2) > 0){
 			coeff.set( 1/(delta_y*delta_y), i, i - 1); 
 		}
-		if (delta_x != delta_y){ //Temporary workaround as SparseMatrix class does not handle 0 insertion properly
-			coeff.set ((2/(delta_y*delta_y) - 2/(delta_x*delta_x)), i, i);
-		}
+		
+		coeff.set ((2/(delta_y*delta_y) + 2/(delta_x*delta_x)), i, i);
+
 		if (i < matr_size - 1 && (i+1) % (coord_y_steps -2) > 0){
 			coeff.set( 1/(delta_y*delta_y), i, i + 1); 
 		}
