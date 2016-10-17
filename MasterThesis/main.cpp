@@ -45,7 +45,7 @@ void main(){
 			coeff.set( 1/(delta_y*delta_y), i, i - 1); 
 		}
 		
-		coeff.set ((2/(delta_y*delta_y) + 2/(delta_x*delta_x)), i, i);
+		coeff.set ((-2/(delta_y*delta_y) - 2/(delta_x*delta_x)), i, i);
 
 		if (i < matr_size - 1 && (i+1) % (coord_y_steps -2) > 0){
 			coeff.set( 1/(delta_y*delta_y), i, i + 1); 
@@ -80,10 +80,9 @@ void main(){
 	cout << "Free elements: " << endl;
 	util::print(freeElements);
 
-	//Jacobi solver does not work as the matrix is not diagonally dominant
-	//vector<double> result = JacobiSolver(coeff, freeElements);
-	vector<double> result = ConjugateGradientSolver(coeff, freeElements);
-	//util::print(result);
+	vector<double> result = JacobiSolver(coeff, freeElements);
+	//vector<double> result = ConjugateGradientSolver(coeff, freeElements);
+	util::print(result);
 
 	int j = 0;
 	for (int x = 1; x < coord_x_steps-1; x++){
@@ -93,7 +92,21 @@ void main(){
 	}
 
 	cout << "Result: " << endl;
-	util::print_matrix(u);
+	//util::print_matrix(u);
+
+	cout << "\t";
+	for (int j = 0; j < coord_y_steps; j++) {
+		cout << COORD_LOWER_BOUND_Y + j * delta_y << "\t";
+	}
+	cout << endl;
+
+	for (int i = 0; i < coord_x_steps; i++) {
+		cout << COORD_LOWER_BOUND_X + i * delta_x << "\t";
+		for (int j = 0; j < coord_y_steps; j++) {
+			cout << u[i][j] << "\t";
+		}
+		cout << endl;
+	}
 	cout << "The end!" << endl;
 	getchar();
 }

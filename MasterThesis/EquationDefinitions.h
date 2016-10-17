@@ -13,7 +13,7 @@ const double EPSILON = 0.0001;
 namespace def{
 	template <typename T> 
 	T sigma (T x, T y){
-		return -2*(x * x + y * y);
+		return -2 * (x * x + y * y);
 	}
 
 	template <typename T>
