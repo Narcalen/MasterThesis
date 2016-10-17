@@ -27,12 +27,12 @@ void main(){
 
 	//set boundary values:
 	for (int x = 0; x < coord_x_steps; x++){
-		u[x][0] = def::boundaryValue(x, 0);
-		u[x][coord_y_steps-1] = def::boundaryValue(x, coord_y_steps-1);
+		u[x][0] = def::boundaryValue(COORD_LOWER_BOUND_X + x * delta_x, COORD_LOWER_BOUND_Y);
+		u[x][coord_y_steps-1] = def::boundaryValue(COORD_LOWER_BOUND_X + x * delta_x, COORD_LOWER_BOUND_Y + (coord_y_steps - 1) * delta_y);
 	}
 	for (int y = 0; y < coord_y_steps; y++){
-		u[0][y] = def::boundaryValue(0, y);
-		u[coord_x_steps-1][y]	= def::boundaryValue(coord_x_steps-1, y);
+		u[0][y] = def::boundaryValue(COORD_LOWER_BOUND_X, COORD_LOWER_BOUND_Y + y * delta_y);
+		u[coord_x_steps-1][y]	= def::boundaryValue(COORD_LOWER_BOUND_X + (coord_x_steps - 1) * delta_x, COORD_LOWER_BOUND_Y + y * delta_y);
 	}
 
 	//initialize matrix with the coefficients
