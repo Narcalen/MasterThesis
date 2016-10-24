@@ -121,5 +121,14 @@ namespace util {
 		return result;
 	}
 
+	template <typename T>
+	double norm(const std::vector<T>& a)
+	{
+		T norm = 0;
+		for (int i = 0; i < a.size(); i++) {
+			norm += a[i] * a[i];
+		}
 
+		return sqrt(norm);
+	}
 }

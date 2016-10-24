@@ -80,8 +80,8 @@ void main(){
 	cout << "Free elements: " << endl;
 	util::print(freeElements);
 
-	vector<double> result = JacobiSolver(coeff, freeElements);
-	//vector<double> result = ConjugateGradientSolver(coeff, freeElements);
+	//vector<double> result = JacobiSolver(coeff, freeElements);
+	vector<double> result = ConjugateGradientSolver(coeff, freeElements);
 	util::print(result);
 
 	int j = 0;

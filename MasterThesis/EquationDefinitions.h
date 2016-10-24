@@ -5,8 +5,8 @@ const double COORD_UPPER_BOUND_X = 5;
 const double COORD_LOWER_BOUND_Y = 0;
 const double COORD_UPPER_BOUND_Y = 2;
 
-const double delta_x = 1;
-const double delta_y = 0.5;
+const double delta_x = 0.01;
+const double delta_y = 0.05;
 
 const double EPSILON = 0.0001;
 

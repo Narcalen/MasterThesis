@@ -17,7 +17,12 @@ vector<T> ConjugateGradientSolver(const SparseMatrix<T>& matrix, const vector<T>
 	r = add(freeElements, multiply((T)-1, multiply(matrix, result)));
 	z.assign(r.begin(), r.end());
 
-	for (int i = 1; i <=N; i++){
+	double norm_free_elem = norm(freeElements);
+
+	int i = 0;
+
+	for (i = 1; i <=N; i++){
+	//while(norm(r) / norm_free_elem > EPSILON){
 		Az = multiply(matrix, z);
 		alpha = scalar(r, r) / scalar(Az, z);
 		result = add(result, multiply(alpha, z));
@@ -25,7 +30,9 @@ vector<T> ConjugateGradientSolver(const SparseMatrix<T>& matrix, const vector<T>
 		r = add(r, multiply(-1 * alpha, Az));
 		beta = scalar(r, r) / scalar(oldR, oldR);
 		z = add(r, multiply(beta, z));
+		i++;
 	}
 
+	cout << "SLE solved in " << i << " iterations" << endl;
 	return result;
 }
