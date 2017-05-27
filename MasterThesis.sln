@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MasterThesis", "MasterThesis\MasterThesis.vcxproj", "{45449966-27DA-443F-8B24-9E8E786BB313}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FiniteDifferencesConsecutive", "MasterThesis\MasterThesis.vcxproj", "{45449966-27DA-443F-8B24-9E8E786BB313}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SolutionValidation", "SolutionValidation\SolutionValidation.vcxproj", "{4C7BC363-696E-4F8F-8B42-EBA916BDC8BE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PoissonParallel", "PoissonParallel\PoissonParallel.vcxproj", "{6B72326D-403A-4A4B-A6C7-F01AE52043E8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FiniteDifferencesParallel", "PoissonParallel\PoissonParallel.vcxproj", "{6B72326D-403A-4A4B-A6C7-F01AE52043E8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FiniteVolumesConsecutive", "FiniteVolumesConsecutive\FiniteVolumesConsecutive.vcxproj", "{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,16 @@ Global
 		{6B72326D-403A-4A4B-A6C7-F01AE52043E8}.Release|Win32.Build.0 = Release|Win32
 		{6B72326D-403A-4A4B-A6C7-F01AE52043E8}.Release|x64.ActiveCfg = Release|x64
 		{6B72326D-403A-4A4B-A6C7-F01AE52043E8}.Release|x64.Build.0 = Release|x64
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Debug|ARM.ActiveCfg = Debug|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Debug|Win32.Build.0 = Debug|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Debug|x64.ActiveCfg = Debug|x64
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Debug|x64.Build.0 = Debug|x64
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Release|ARM.ActiveCfg = Release|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Release|Win32.ActiveCfg = Release|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Release|Win32.Build.0 = Release|Win32
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Release|x64.ActiveCfg = Release|x64
+		{ECEE0E3E-9B45-4050-9F34-E5F4A0A90101}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

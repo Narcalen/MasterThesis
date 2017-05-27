@@ -15,12 +15,14 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>MasterThesis</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>FiniteDifferencesConsecutive</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -75,14 +77,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SparseMatrix\SparseMatrix.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sparse-Matrix\src\SparseMatrix\exceptions.h" />
+    <ClInclude Include="..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.h" />
     <ClInclude Include="ConjugateGradient.h" />
     <ClInclude Include="EquationDefinitions.h" />
     <ClInclude Include="SimpleIteration.h" />
-    <ClInclude Include="SparseMatrix\SparseMatrix.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

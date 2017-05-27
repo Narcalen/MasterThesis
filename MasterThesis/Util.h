@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include "..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.h"
 
 using namespace std;
 
@@ -83,15 +84,15 @@ namespace util {
 	}
 
 	template<typename T>
-	vector<T> multiply (const SparseMatrix<T>& matrix, const vector<T>& vector) {
-		int rows = matrix.size();
-		int cols = matrix.size();
+	std::vector<T> multiply(const SparseMatrix<T>& matrix, const vector<T>& vector) {
+		int rows = matrix.getRowCount();
+		int cols = matrix.getColumnCount();
 		assert(vector.size() == cols);
 		std::vector<T> result(rows, 0);
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				result[i] += matrix.get(i,j) * vector[j];
+				result[i] += matrix.get(i + 1, j + 1) * vector[j];
 			}
 		}
 
@@ -110,7 +111,7 @@ namespace util {
 	}
 
 	template <typename T>
-	vector<T> add (const std::vector<T>& a, const std::vector<T>& b)
+	vector<T> add(const std::vector<T>& a, const std::vector<T>& b)
 	{
 		assert(a.size() == b.size());
 
