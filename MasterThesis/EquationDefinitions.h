@@ -8,7 +8,7 @@ const double COORD_UPPER_BOUND_Y = 2;
 const double delta_x = 1;
 const double delta_y = 1;
 
-const double EPSILON = 0.0001;
+const double EPSILON = 0.1;
 
 namespace def{
 	template <typename T> 
