@@ -7,7 +7,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,30 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\FiniteVolumesConsecutive\Element.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FiniteVolumesConsecutive\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SimpleIteration.h">
+    <ClInclude Include="..\MasterThesis\Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Util.h">
+    <ClInclude Include="..\MasterThesis\EquationDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EquationDefinitions.h">
+    <ClInclude Include="..\FiniteVolumesConsecutive\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConjugateGradient.h">
+    <ClInclude Include="..\FiniteVolumesConsecutive\Element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Sparse-Matrix\src\SparseMatrix\exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.h">
+    <ClInclude Include="..\FiniteVolumesConsecutive\FVMUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

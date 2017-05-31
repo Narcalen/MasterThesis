@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include "..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.h"
 
 using namespace std;
 
@@ -39,9 +40,9 @@ namespace util {
 	}
 
 	template<typename T>
-	T distance(const vector<T>& vector1, const vector<T>& vector2) {
+	double distance(const vector<T>& vector1, const vector<T>& vector2) {
 		assert(vector1.size() == vector2.size());
-		T distance = 0;
+		double distance = 0;
 		for (int i = 0; i < vector1.size(); i++) {
 			distance += pow(vector1[i] - vector2[i], 2);
 		}
@@ -49,9 +50,9 @@ namespace util {
 	}
 
 	template<typename T>
-	T norm(const vector<T>& vector1, const vector<T>& vector2) {
+	double norm(const vector<T>& vector1, const vector<T>& vector2) {
 		assert(vector1.size() == vector2.size());
-		T norm = fabs(vector1[0] - vector2[0]);
+		double norm = fabs(vector1[0] - vector2[0]);
 		for (int i = 1; i < vector1.size(); i++) {
 			if (fabs(vector1[i] - vector2[i]) > norm) {
 				norm = fabs(vector1[i] - vector2[i]);
@@ -61,7 +62,7 @@ namespace util {
 	}
 
 	template<typename T>
-	T sum(const vector<T>& vector1, const vector<T>& vector2) {
+	vector<T> sum(const vector<T>& vector1, const vector<T>& vector2) {
 		assert(vector1.size() == vector2.size());
 		vector<T> result(vector1.size());
 		for (int i = 0; i < vector1.size(); i++) {
@@ -83,15 +84,15 @@ namespace util {
 	}
 
 	template<typename T>
-	vector<T> multiply (const SparseMatrix<T>& matrix, const vector<T>& vector) {
-		int rows = matrix.size();
-		int cols = matrix.size();
+	std::vector<T> multiply(const SparseMatrix<T>& matrix, const vector<T>& vector) {
+		int rows = matrix.getRowCount();
+		int cols = matrix.getColumnCount();
 		assert(vector.size() == cols);
 		std::vector<T> result(rows, 0);
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				result[i] += matrix.get(i,j) * vector[j];
+				result[i] += matrix.get(i + 1, j + 1) * vector[j];
 			}
 		}
 
@@ -110,7 +111,7 @@ namespace util {
 	}
 
 	template <typename T>
-	vector<T> add (const std::vector<T>& a, const std::vector<T>& b)
+	vector<T> add(const std::vector<T>& a, const std::vector<T>& b)
 	{
 		assert(a.size() == b.size());
 

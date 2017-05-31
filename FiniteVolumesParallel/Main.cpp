@@ -1,9 +1,14 @@
 #include <mpi.h>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <vector>
 #include <cmath>
+
 #include "..\MasterThesis\EquationDefinitions.h"
+#include "..\FiniteVolumesConsecutive\Element.h"
+#include "..\FiniteVolumesConsecutive\Node.h"
+#include "..\FiniteVolumesConsecutive\FVMUtil.h"
 
 #define MASTER 0
 
@@ -17,14 +22,9 @@ double norm(double vector_size, double* vector);
 
 void main(int argc, char* argv[])
 {
-	const int coord_x_steps = (COORD_UPPER_BOUND_X - COORD_LOWER_BOUND_X) / delta_x + 1;
-	const int coord_y_steps = (COORD_UPPER_BOUND_Y - COORD_LOWER_BOUND_Y) / delta_y + 1;
-	const int matr_size = (coord_x_steps - 2) * (coord_y_steps - 2);
-
 	int rank, world_size, error = 0;
 	double** coeff = NULL;
 	double* freeElements = NULL;
-	double** u = NULL;
 
 	double* result = NULL;
 	double* z = NULL;
@@ -35,6 +35,55 @@ void main(int argc, char* argv[])
 
 	double* tmp_vector = NULL;
 	unsigned done = 0;
+
+	//output format
+	cout << fixed << showpoint;
+	cout << setprecision(2);
+
+	int a, b, c;
+	ifstream infile;
+
+	vector<Element> elements;
+	vector<Node> nodes;
+
+	//read nodes data
+	infile.open("distmesh_nodes.txt", ios::in);
+	if (!infile) {
+		cout << "Cannot open input file distmesh_nodes.txt" << endl;
+	}
+
+	Node node(2);
+	while (infile >> a >> b)
+	{
+		node.set(0, a);
+		node.set(1, b);
+		nodes.push_back(node);
+	}
+	infile.close();
+	//cout << "Nodes: " << endl;
+	//for (Node node: nodes) {
+	//	cout << node.get(0) << " " << node.get(1) << endl;
+	//}
+
+	//read elements data
+	infile.open("distmesh_elements.txt", ios::in);
+	if (!infile) {
+		cout << "Cannot open input file distmesh_elements.txt" << endl;
+	}
+
+	Element element(3);
+	while (infile >> a >> b >> c)
+	{
+		element.setNode(0, a);
+		element.setNode(1, b);
+		element.setNode(2, c);
+		elements.push_back(element);
+	}
+	infile.close();
+
+	const int matr_size = nodes.size();
+	cout << "Number of elements: " << matr_size << endl;
+
 
 	//output format
 	cout << fixed << showpoint;
@@ -61,46 +110,73 @@ void main(int argc, char* argv[])
 	int elements_per_processor = matr_size / world_size;
 
 	if (rank == MASTER) {
-		u = new double*[coord_x_steps];
-		for (int i = 0; i < coord_x_steps; i++) {
-			u[i] = new double[coord_y_steps];
-			for (int j = 0; j < coord_y_steps; j++) {
-				u[i][j] = -1;
-			}
-		}
-		//set boundary values:
-		for (int x = 0; x < coord_x_steps; x++) {
-			u[x][0] = def::boundaryValue(COORD_LOWER_BOUND_X + x * delta_x, COORD_LOWER_BOUND_Y);
-			u[x][coord_y_steps - 1] = def::boundaryValue(COORD_LOWER_BOUND_X + x * delta_x, COORD_LOWER_BOUND_Y + (coord_y_steps - 1) * delta_y);
-		}
-		for (int y = 0; y < coord_y_steps; y++) {
-			u[0][y] = def::boundaryValue(COORD_LOWER_BOUND_X, COORD_LOWER_BOUND_Y + y * delta_y);
-			u[coord_x_steps - 1][y] = def::boundaryValue(COORD_LOWER_BOUND_X + (coord_x_steps - 1) * delta_x, COORD_LOWER_BOUND_Y + y * delta_y);
-		}
-
+		freeElements = new double[matr_size];
 		coeff = new double*[matr_size];
 		for (int i = 0; i < matr_size; i++) {
 			coeff[i] = new double[matr_size];
+			freeElements[i] = 0;
 			for (int j = 0; j < matr_size; j++) {
 				coeff[i][j] = 0;
 			}
-			if (i >= coord_y_steps - 2) {
-				coeff[i][i - (coord_y_steps - 2)] = 1 / (delta_x*delta_x);
-			}
-			if (i >= 1 && i % (coord_y_steps - 2) > 0) {
-				coeff[i][i - 1] = 1 / (delta_y*delta_y);
-			}
-
-			coeff[i][i] = -2 / (delta_y*delta_y) - 2 / (delta_x*delta_x);
-
-			if (i < matr_size - 1 && (i + 1) % (coord_y_steps - 2) > 0) {
-				coeff[i][i + 1] = 1 / (delta_y*delta_y);
-			}
-			if (i < matr_size - (coord_y_steps - 2)) {
-				coeff[i][i + (coord_y_steps - 2)] = 1 / (delta_x*delta_x);
-			}
-
 		}
+
+		for (Element element : elements) {
+			int node1Num = element.getNode(0);
+			Node node1 = nodes[node1Num];
+			int node2Num = element.getNode(1);
+			Node node2 = nodes[node2Num];
+			int node3Num = element.getNode(2);
+			Node node3 = nodes[node3Num];
+			double multiplier = 1 / (2 * abs(detD(node1, node2, node3)));
+
+			//add local main diagonal to global main diagonal
+			double val = multiplier * (deltaX(node2, node3)*deltaX(node2, node3) + deltaY(node2, node3) * deltaY(node2, node3));
+			coeff[node1Num][node1Num] += val;
+
+			val = multiplier * (deltaX(node3, node1)*deltaX(node3, node1) + deltaY(node3, node1) * deltaY(node3, node1));
+			coeff[node2Num][node2Num] += val;
+
+			val = multiplier * (deltaX(node1, node2)*deltaX(node1, node2) + deltaY(node1, node2) * deltaY(node1, node2));
+			coeff[node3Num][node3Num] += val;
+
+			//add local elements above and below main diagonal to global diagonals
+			val = multiplier * (deltaX(node3, node1)*deltaX(node2, node3) + deltaY(node3, node1) * deltaY(node2, node3));
+			coeff[node1Num][node2Num] += val;
+			coeff[node2Num][node1Num] += val;
+
+			val = multiplier * (deltaX(node1, node2)*deltaX(node2, node3) + deltaY(node1, node2) * deltaY(node2, node3));
+			coeff[node1Num][node3Num] += val;
+			coeff[node3Num][node1Num] += val;
+
+			val = multiplier * (deltaX(node1, node2)*deltaX(node3, node1) + deltaY(node1, node2) * deltaY(node3, node1));
+			coeff[node3Num][node2Num] += val;
+			coeff[node2Num][node3Num] += val;
+
+			//set values for the right side of the equations system
+			double f1 = -def::sigma(node1.get(0), node1.get(1));
+			double f2 = -def::sigma(node2.get(0), node2.get(1));
+			double f3 = -def::sigma(node3.get(0), node3.get(1));
+			multiplier = abs(detD(node1, node2, node3)) / 216;
+
+			freeElements[node1Num] += multiplier * (22 * f1 + 7 * f2 + 7 * f3);
+			freeElements[node2Num] += multiplier * (7 * f1 + 22 * f2 + 7 * f3);
+			freeElements[node3Num] += multiplier * (7 * f1 + 7 * f2 + 22 * f3);
+		}
+
+		//boundary conditions 1st type
+		for (unsigned i = 0; i < nodes.size(); i++) {
+			Node node = nodes[i];
+			if (node.get(0) == COORD_LOWER_BOUND_X || node.get(0) == COORD_UPPER_BOUND_X
+				|| node.get(1) == COORD_LOWER_BOUND_Y || node.get(1) == COORD_UPPER_BOUND_Y) {
+				for (unsigned j = 0; j < matr_size; j++) {
+					coeff[i][j] = 0;
+					coeff[j][i] = 0;
+				}
+				coeff[i][i] = 1;
+				freeElements[i] = def::boundaryValue(node.get(0), node.get(1));
+			}
+		}
+
 		cout << "Coefficients: " << endl;
 		for (int i = 0; i < matr_size; i++) {
 			for (int j = 0; j < matr_size; j++) {
@@ -109,25 +185,6 @@ void main(int argc, char* argv[])
 			cout << endl;
 		}
 
-		freeElements = new double[matr_size];
-		for (int i = 1; i < coord_x_steps - 1; i++) {
-			for (int j = 1; j < coord_y_steps - 1; j++) {
-				int coord = (i - 1)*(coord_y_steps - 2) + (j - 1);
-				freeElements[coord] = -def::sigma(COORD_LOWER_BOUND_X + i * delta_x, COORD_LOWER_BOUND_Y + j * delta_y);
-				if (j == 1) {
-					freeElements[coord] += -u[i][j - 1] / (delta_y * delta_y);
-				}
-				else if (j == coord_y_steps - 2) {
-					freeElements[coord] += -u[i][j + 1] / (delta_y * delta_y);
-				}
-				if (i == 1) {
-					freeElements[coord] += -u[i - 1][j] / (delta_x * delta_x);
-				}
-				else if (i == coord_x_steps - 2) {
-					freeElements[coord] += -u[i + 1][j] / (delta_x * delta_x);
-				}
-			}
-		}
 		cout << "Free elements: " << endl;
 		for (int i = 0; i < matr_size; i++) {
 			cout << freeElements[i] << "\t";
@@ -136,7 +193,7 @@ void main(int argc, char* argv[])
 
 		result = new double[matr_size];
 		for (int i = 0; i < matr_size; i++) {
-			result[i] = 1;
+			result[i] = 0;
 		}
 		z = new double[matr_size];
 		oldR = new double[matr_size];
@@ -169,7 +226,7 @@ void main(int argc, char* argv[])
 		if (rank == MASTER) {
 			cout << endl << "Iteration " << i++ << endl;
 		}
-
+		i++;
 		//Az = multiply(matrix, z);
 		multiply_matrix_by_vector(matr_size, coeff, z, Az);
 		//if (rank == MASTER) {
@@ -193,7 +250,7 @@ void main(int argc, char* argv[])
 		//oldR.assign(r.begin(), r.end());
 		if (rank == MASTER) {
 			for (int i = 0; i < matr_size; i++) {
-				//cout << result[i] << "\t";
+				cout << result[i] << "\t";
 				oldR[i] = r[i];
 			}
 			//cout << endl;
@@ -212,7 +269,7 @@ void main(int argc, char* argv[])
 		//z = add(r, multiply(beta, z));
 		multiply_vector_by_scalar(matr_size, z, beta, tmp_vector);
 		add_vectors(matr_size, r, tmp_vector, z);
-		if (rank == MASTER && norm(matr_size, r) / norm(matr_size, freeElements) < EPSILON) {
+		if (rank == MASTER && norm(matr_size, r) / norm(matr_size, freeElements) < EPSILON || i >= matr_size  /** matr_size  * matr_size*/) {
 			done = 1;
 		}
 		MPI_Bcast(&done, 1, MPI_UNSIGNED, MASTER, MPI_COMM_WORLD);
@@ -220,34 +277,16 @@ void main(int argc, char* argv[])
 	//END: Conjugate gradients method
 
 	if (rank == MASTER) {
-		int j = 0;
-		for (int x = 1; x < coord_x_steps - 1; x++) {
-			for (int y = 1; y < coord_y_steps - 1; y++) {
-				u[x][y] = result[j++];
-			}
-		}
+
 		cout << "Result: " << endl;
-		//util::print_matrix(u);
-
-		cout << "\t";
-		for (int j = 0; j < coord_y_steps; j++) {
-			cout << COORD_LOWER_BOUND_Y + j * delta_y << "\t";
+		cout << "x\ty\tvalue" << endl;
+		for (unsigned i = 0; i < nodes.size(); i++) {
+			Node node = nodes[i];
+			cout << node.get(0) << "\t" << node.get(1) << "\t" << result[i] << endl;
 		}
-		cout << endl;
 
-		for (int i = 0; i < coord_x_steps; i++) {
-			cout << COORD_LOWER_BOUND_X + i * delta_x << "\t";
-			for (int j = 0; j < coord_y_steps; j++) {
-				cout << u[i][j] << "\t";
-			}
-			cout << endl;
-		}
 		//free global data
 		delete[] freeElements;
-		for (int i = 0; i < coord_x_steps; i++) {
-			delete[] u[i];
-		}
-		delete[] u;
 		for (int i = 0; i < matr_size; i++) {
 			delete[] coeff[i];
 		}
@@ -298,6 +337,7 @@ void multiply_matrix_by_vector(int matr_size, double** matrix, double* vector, d
 	//free local data
 	delete[] local_result;
 	delete[] local_matr_row;
+	delete[] matrix_to_send;
 }
 
 void multiply_vector_by_scalar(int vector_size, double* vector, double scalar, double* result_vector) {

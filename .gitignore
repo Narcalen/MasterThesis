@@ -156,3 +156,6 @@ $RECYCLE.BIN/
 .DS_Store
 /MasterThesis.VC.VC.opendb
 /MasterThesis.VC.db
+/.vs/MasterThesis/v15
+/output_comparison.xlsx
+/triangle.zip

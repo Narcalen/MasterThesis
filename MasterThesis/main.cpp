@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "SparseMatrix\SparseMatrix.h"
+#include "..\Sparse-Matrix\src\SparseMatrix\SparseMatrix.h"
 #include "SimpleIteration.h"
 #include "EquationDefinitions.h"
 #include "ConjugateGradient.h"
@@ -39,19 +39,19 @@ void main(){
 	SparseMatrix<double> coeff(matr_size);
 	for (int i = 0; i < matr_size; i++){
 		if (i >= coord_y_steps - 2){
-			coeff.set( 1/(delta_x*delta_x), i, i - (coord_y_steps - 2)); 
+			coeff.set( 1/(delta_x*delta_x), i + 1, i - (coord_y_steps - 2) + 1); 
 		}
 		if (i >= 1 && i % (coord_y_steps -2) > 0){
-			coeff.set( 1/(delta_y*delta_y), i, i - 1); 
+			coeff.set( 1/(delta_y*delta_y), i + 1, i);
 		}
 		
-		coeff.set ((-2/(delta_y*delta_y) - 2/(delta_x*delta_x)), i, i);
+		coeff.set ((-2/(delta_y*delta_y) - 2/(delta_x*delta_x)), i + 1, i + 1);
 
 		if (i < matr_size - 1 && (i+1) % (coord_y_steps -2) > 0){
-			coeff.set( 1/(delta_y*delta_y), i, i + 1); 
+			coeff.set( 1/(delta_y*delta_y), i + 1, i + 2);
 		}
 		if (i < matr_size - (coord_y_steps - 2)){
-			coeff.set( 1/(delta_x*delta_x), i, i + (coord_y_steps - 2)); 
+			coeff.set( 1/(delta_x*delta_x), i + 1, i + (coord_y_steps - 2) + 1);
 		}
 
 	}

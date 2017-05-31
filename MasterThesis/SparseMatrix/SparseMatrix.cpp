@@ -31,12 +31,12 @@ template<typename T> SparseMatrix<T>::~SparseMatrix(void)
 	if (this->vals != NULL) {
 		//delete this->vals;
 		//delete this->cols;
-		this -> vals -> clear();
-		this -> cols -> clear();
+		this->vals->clear();
+		this->cols->clear();
 	}
 
 	//delete this->rows;
-	this -> rows -> clear();
+	this->rows->clear();
 }
 
 
@@ -54,7 +54,7 @@ template<typename T> void SparseMatrix<T>::construct(int rows, int columns)
 	this->rows = new vector<int>(rows + 1, 0);
 }
 
-template<typename T> int SparseMatrix<T>::size() const{
+template<typename T> int SparseMatrix<T>::size() const {
 	return m;
 }
 
@@ -70,7 +70,8 @@ template<typename T> T SparseMatrix<T>::get(int row, int col) const
 		if (actual == col) {
 			return this->vals->at(i);
 
-		} else if (actual > col) {
+		}
+		else if (actual > col) {
 			break;
 		}
 	}
@@ -92,7 +93,8 @@ template<typename T> SparseMatrix<T> & SparseMatrix<T>::set(T val, int row, int 
 		if (actual == col) {
 			break;
 
-		} else if (actual > col) {
+		}
+		else if (actual > col) {
 			break;
 		}
 	}
@@ -102,10 +104,12 @@ template<typename T> SparseMatrix<T> & SparseMatrix<T>::set(T val, int row, int 
 			this->insert(pos, row, col, val);
 		}
 
-	} else if (val == 0) {
+	}
+	else if (val == 0) {
 		this->remove(pos, row);
 
-	} else {
+	}
+	else {
 		this->vals->at(pos) = val;
 	}
 
@@ -115,7 +119,7 @@ template<typename T> SparseMatrix<T> & SparseMatrix<T>::set(T val, int row, int 
 
 template<typename T> vector<T> SparseMatrix<T>::multiply(const vector<T> & x) const
 {
-	if (this->n != (int) x.size()) {
+	if (this->n != (int)x.size()) {
 		throw "Cannot multiply: Matrix column count and vector size don't match.";
 	}
 
@@ -189,7 +193,8 @@ template<typename T> void SparseMatrix<T>::insert(int index, int row, int col, T
 		this->vals = new vector<T>(1, val);
 		this->cols = new vector<int>(1, col);
 
-	} else {
+	}
+	else {
 		this->vals->insert(this->vals->begin() + index, val);
 		this->cols->insert(this->cols->begin() + index, col);
 	}
@@ -212,7 +217,7 @@ template<typename T> void SparseMatrix<T>::remove(int index, int row)
 
 template<typename T> T SparseMatrix<T>::operator () (int row, int col) const
 {
-	return this->get(row,col);
+	return this->get(row, col);
 }
 
 template<typename T> ostream & operator << (ostream & os, const SparseMatrix<T> & matrix)
@@ -240,7 +245,7 @@ template<typename T> bool operator == (const SparseMatrix<T> & a, const SparseMa
 	return ((a.vals == NULL && b.vals == NULL)
 		|| (a.vals != NULL && b.vals != NULL && *(a.vals) == *(b.vals)))
 		&& ((a.cols == NULL && b.cols == NULL)
-		|| (a.cols != NULL && b.cols != NULL && *(a.cols) == *(b.cols)))
+			|| (a.cols != NULL && b.cols != NULL && *(a.cols) == *(b.cols)))
 		&& *(a.rows) == *(b.rows);
 }
 
